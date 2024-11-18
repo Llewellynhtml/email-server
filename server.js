@@ -1,11 +1,15 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+const cors = require('cors'); // Import CORS package
 
 const app = express();
 const port = 3000;
 
 // Middleware to parse JSON body
 app.use(express.json());
+
+// Enable CORS for all origins (you can configure it further for security)
+app.use(cors());
 
 // Create a transport instance using SMTP (Gmail example)
 const transporter = nodemailer.createTransport({
@@ -22,17 +26,19 @@ app.post('/send-email', (req, res) => {
 
   // Setup email data
   const mailOptions = {
-    from: 'your-email@gmail.com', // Sender address
-    to: to,                       // Receiver address (can be an array of emails)
-    subject: subject,             // Subject line
-    text: text                    // Email body
+    from: 'Lsg.mllewellyn@gmail.com', // Sender address
+    to: to || 'Llewellyn.ml.info@gmail.com',  // Default to 'Llewellyn.ml.info@gmail.com' if no recipient is provided
+    subject: subject,                  // Subject line
+    text: text                          // Email body
   };
 
   // Send the email
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
+      console.error('Error sending email:', error); // Log the full error object
       return res.status(500).json({ message: 'Error sending email', error });
     }
+    console.log('Email sent:', info); // Log the email sending information
     res.status(200).json({ message: 'Email sent successfully!', info });
   });
 });
